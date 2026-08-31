@@ -1,0 +1,41 @@
+name: Unzip ZIP in repo
+
+on:
+  workflow_dispatch:   # आप Actions टैब से बटन दबाकर चला सकते हैं
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # ताकि git push कर सके
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          lfs: true     # <--- यह लाइन जोड़ना सबसे ज़रूरी है ताकि असली ZIP फ़ाइल डाउनलोड हो सके
+
+      - name: Unzip file in place
+        run: |
+          # यहाँ अपनी ZIP फ़ाइल का नाम दें
+          ZIP_FILE="madeeasy.zip"
+
+          # सेफ़्टी: अगर ZIP नहीं है तो फेल हो जाए
+          if [ ! -f "$ZIP_FILE" ]; then
+            echo "ZIP file $ZIP_FILE not found"
+            exit 1
+          fi
+
+          # ZIP को वर्तमान डायरेक्टरी में अनज़िप करो
+          unzip "$ZIP_FILE" -d . 
+
+          # चाहें तो ZIP हटा दो
+          rm "$ZIP_FILE"
+
+      - name: Commit unzipped files
+        run: |
+          git config --local user.email "github-actions@users.noreply.github.com"
+          git config --local user.name "github-actions"
+          git add .
+          git commit -m "Unzip archive in repo" || echo "Nothing to commit"
+          git push origin HEAD
