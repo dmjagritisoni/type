@@ -18,7 +18,7 @@ jobs:
       - name: Unzip file in place
         run: |
           # यहाँ अपनी ZIP फ़ाइल का नाम दें
-          ZIP_FILE="madeeasy.zip"
+          ZIP_FILE="type.zip"
 
           # सेफ़्टी: अगर ZIP नहीं है तो फेल हो जाए
           if [ ! -f "$ZIP_FILE" ]; then
